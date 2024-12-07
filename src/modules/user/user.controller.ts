@@ -85,7 +85,7 @@ export async function getUserByIdHandler(
   const { id } = request.params;
   console.log(id);
   try {
-    const user = await findUserById(Number(id));
+    const user = await findUserById(id);
     if (!user) return reply.status(404).send({ message: "User not found" });
     return reply.status(200).send(user);
   } catch (e) {

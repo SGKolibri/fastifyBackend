@@ -2,11 +2,13 @@ import Fastify, { FastifyReply, FastifyRequest } from "fastify";
 import fastifyJwt from "@fastify/jwt";
 import { withRefResolver } from "fastify-zod";
 import fastifyCors from "@fastify/cors";
-import userRoutes from "./modules/user/user.route";
+import userRoutes from "./modules/user/user.routes";
+import { adminRoutes } from "./modules/admin/admin.routes";
 import { userSchemas } from "./modules/user/user.schema";
-import { productSchemas } from "./modules/product/product.schema";
-import productRoutes from "./modules/product/product.route";
+import { adminSchemas } from "./modules/admin/admin.schemas";
 import { version } from "../package.json";
+import { pontoRoutes } from "./modules/ponto/ponto.routes";
+import { pontoSchemas } from "./modules/ponto/ponto.schemas";
 
 export const server = Fastify();
 
@@ -55,7 +57,7 @@ server.get("/", async () => {
 });
 
 async function main() {
-  for (const schema of [...userSchemas, ...productSchemas]) {
+  for (const schema of [...userSchemas, ...adminSchemas, ...pontoSchemas]) {
     server.addSchema(schema);
   }
 
@@ -65,7 +67,8 @@ async function main() {
   });
 
   server.register(userRoutes, { prefix: "api/users" });
-  server.register(productRoutes, { prefix: "api/products" });
+  server.register(adminRoutes, { prefix: "api/admins" });
+  server.register(pontoRoutes, { prefix: "api/pontos" });
 
   try {
     await server.listen({ port: 5050, host: "0.0.0.0" });

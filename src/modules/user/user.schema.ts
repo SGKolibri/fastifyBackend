@@ -20,6 +20,7 @@ const createUserSchema = z.object({
       invalid_type_error: "Password must be at least 6 characters",
     })
     .min(6),
+  address: z.string(),
 });
 
 const createUserResponseSchema = z.object({
@@ -46,7 +47,7 @@ const loginUserResponseSchema = z.object({
 });
 
 const userResponseSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   ...userCore,
 });
 

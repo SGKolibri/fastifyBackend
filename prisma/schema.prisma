@@ -13,40 +13,91 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  CIDADAO
+  GESTOR
+}
+
 model User {
-  id       Int       @id @default(autoincrement())
+  id       String    @id @default(cuid())
   email    String    @unique
-  name     String?
+  name     String
   password String
   salt     String
-  products Product[]
+  address  String
+  role     Role      @default(CIDADAO)
 }
 
-model Product {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  price     Float
-  owner     User     @relation(fields: [ownerId], references: [id])
-  ownerId   Int
+model Admin {
+  id       String    @id @default(cuid())
+  email    String    @unique
+  name     String
+  password String
+  salt     String
+  role     Role      @default(GESTOR)
 }
 
-// One company can have multiple works
-model Company {
-  id    Int    @id @default(autoincrement())
-  name  String
-  works Work[]
+model PontoColeta {
+  id          String    @id @default(cuid())
+  name        String
+  address     String
+  description String
+  image       String?
+  latitude    Float
+  longitude   Float
+  coletas     Coleta[]
+  horarios    HorariosPonto[]
 }
 
-// One work can only belong to one company
-model Work {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  price     Float
-  company   Company  @relation(fields: [companyId], references: [id])
-  companyId Int
+//  Horários de funcionamento do ponto de coleta
+model HorariosPonto {
+  id        String    @id @default(cuid())
+  inicio    DateTime
+  fim       DateTime
+  ponto     PontoColeta @relation(fields: [pontoId], references: [id])
+  pontoId   String
+}
+
+// Rota possui vários horários e vários endereços de coleta
+model Rotas {
+  id        String    @id @default(cuid())
+  dia       String
+  horarios  Horarios[]
+  addresses  Addresses[]
+}
+
+model Horarios {
+  id        String    @id @default(cuid())
+  inicio    DateTime
+  fim       DateTime
+  rota      Rotas     @relation(fields: [rotasId], references: [id])
+  rotasId   String
+}
+
+model Addresses {
+  id        String    @id @default(cuid())
+  name      String
+  rota      Rotas    @relation(fields: [rotasId], references: [id])
+  rotasId    String
+}
+
+model Coleta {
+  id          String    @id @default(cuid())
+  tipo        TiposColeta
+  ponto       PontoColeta @relation(fields: [pontoId], references: [id])
+  pontoId     String
+}
+// TODO: Coleta agendada
+
+enum TiposColeta {
+  PAPEL_PAPELAO
+  PLASTICO_ISOPOR
+  VIDRO
+  METAL
+  MADEIRA
+  PERIGOSO_CONTAMINADO
+  DESCARTE_SAUDE
+  RADIOATIVO
+  ORGANICO
+  NAO_RECICLAVEL
 }

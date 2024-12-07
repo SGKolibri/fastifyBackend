@@ -30,7 +30,7 @@ export async function findUsers() {
   });
 }
 
-export async function findUserById(id: number) {
+export async function findUserById(id: string) {
   return prisma.user.findUnique({
     where: { id },
     select: {
