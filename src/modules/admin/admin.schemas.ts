@@ -19,11 +19,18 @@ const createAdminSchema = z.object({
   ...adminCore,
 });
 
+const loginAdminSchema = z.object({
+  email: adminCore.email,
+  password: adminCore.password,
+});
+
 export type CreateAdminInput = z.infer<typeof createAdminSchema>;
+export type LoginAdminInput = z.infer<typeof loginAdminSchema>;
 
 export const { schemas: adminSchemas, $ref } = buildJsonSchemas(
   {
     createAdminSchema,
+    loginAdminSchema,
   },
   { $id: "AdminSchema" }
 );

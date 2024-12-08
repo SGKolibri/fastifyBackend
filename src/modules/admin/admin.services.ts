@@ -24,3 +24,9 @@ export async function getAdmins() {
     },
   });
 }
+
+export async function findAdminByEmail(email: string) {
+  return prisma.admin.findUnique({
+    where: { email },
+  });
+}
